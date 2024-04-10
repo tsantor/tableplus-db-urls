@@ -38,8 +38,9 @@ def get_env(env_path=None) -> environ.Env:
     return env
 
 
-def get_local_db_conn_str(env: environ.Env) -> str:
+def get_local_db_conn_str(env_path=None) -> str:
     """Get the local DB connection string."""
+    env = get_env(env_path)
     params = {
         "statusColor": "F8F8F8",
         "env": "local",
@@ -54,8 +55,9 @@ def get_local_db_conn_str(env: environ.Env) -> str:
     return build_db_url(db_user, db_pass, db_name, params=params)
 
 
-def get_prod_db_conn_str(env: environ.Env, ssh_user: str, ssh_host: str) -> str:
+def get_prod_db_conn_str(env_path, ssh_user: str, ssh_host: str) -> str:
     """Get the production DB connection string."""
+    env = get_env(env_path)
     params = {
         "statusColor": "FFD7D4",
         "env": "production",
@@ -96,10 +98,10 @@ def run(args: Namespace) -> None:
     local_env_path = str(project_path / ".envs/.local/.postgres")
     prod_env_path = str(project_path / ".envs/.production/.postgres")
 
-    local_env = get_env(local_env_path)
-    prod_env = get_env(prod_env_path)
+    # local_env = get_env(local_env_path)
+    # prod_env = get_env(prod_env_path)
 
-    local_db_url = get_local_db_conn_str(local_env)
-    prod_db_url = get_prod_db_conn_str(prod_env, args.user, args.host)
+    local_db_url = get_local_db_conn_str(local_env_path)
+    prod_db_url = get_prod_db_conn_str(prod_env_path, args.ssh_user, args.ssh_host)
 
     _output_db_urls(local_db_url, prod_db_url)

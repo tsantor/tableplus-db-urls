@@ -18,8 +18,8 @@ def get_parser():
         description="Generate TablePlus DB URLs from CookieCutter Django to make setting up connections easier."
     )
     parser.add_argument("-p", "--path", required=True, help="Path to the project")
-    parser.add_argument("--user", required=True, help="SSH User")
-    parser.add_argument("--host", required=True, help="SSH Host")
+    parser.add_argument("--ssh-user", required=True, help="SSH User")
+    parser.add_argument("--ssh-host", required=True, help="SSH Host")
     parser.add_argument(
         "-v",
         "--verbose",

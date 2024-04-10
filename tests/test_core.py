@@ -4,7 +4,6 @@ from argparse import Namespace
 
 import pytest
 from tableplus.core import build_db_url
-from tableplus.core import get_env
 from tableplus.core import get_local_db_conn_str
 from tableplus.core import get_prod_db_conn_str
 from tableplus.core import run
@@ -21,9 +20,10 @@ def _mock_env_vars():
 
 
 @pytest.fixture()
-def test_env():
+def temp_env():
+    """Create a temporary .env file."""
     temp = tempfile.NamedTemporaryFile(suffix=".env", delete=False)
-    temp.write(b"POSTGRES_USER=user\nPOSTGRES_PASSWORD=pass\nPOSTGRES_DB=db")
+    temp.write(b"POSTGRES_USER=user\nPOSTGRES_PASSWORD=pass\nPOSTGRES_DB=path")
     temp.close()
     return temp
 
@@ -45,22 +45,22 @@ def test_build_db_url_with_ssh():
     )
 
 
-def test_get_local_db_conn_str():
-    env = get_env()
-    conn_str = get_local_db_conn_str(env)
+def test_get_local_db_conn_str(temp_env):
+    conn_str = get_local_db_conn_str(temp_env.name)
     assert conn_str.startswith("postgresql://user:pass@127.0.0.1:5432/path")
 
 
-def test_get_prod_db_conn_str():
-    env = get_env()
-    conn_str = get_prod_db_conn_str(env, ssh_user="testuser", ssh_host="127.0.0.1")
+def test_get_prod_db_conn_str(temp_env):
+    conn_str = get_prod_db_conn_str(
+        temp_env.name, ssh_user="testuser", ssh_host="127.0.0.1"
+    )
     assert conn_str.startswith(
         "postgresql+ssh://testuser@127.0.0.1/user:pass@127.0.0.1:5432/path"
     )
 
 
-def test_run(test_env, capsys):
-    args = Namespace(path=test_env.name, user="testuser", host="127.0.0.1")
+def test_run(temp_env, capsys):
+    args = Namespace(path=temp_env.name, ssh_user="testuser", ssh_host="127.0.0.1")
     run(args)
     captured = capsys.readouterr()
     assert isinstance(captured.out, str)
