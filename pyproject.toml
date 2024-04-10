@@ -27,6 +27,13 @@ authors = [
 ]
 # license = { text = "MIT" }
 
+[project.urls]
+# Homepage = "https://example.com"
+# Documentation = "https://readthedocs.org"
+Repository = "https://github.com/tsantor/tableplus-db-urls.git"
+Issues = "https://github.com/tsantor/tableplus-db-urls/issues"
+Changelog = "https://github.com/tsantor/tableplus-db-urls/blob/master/HISTORY.md"
+
 [project.scripts]
 tableplus = "tableplus.cli:run"
 

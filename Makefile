@@ -99,6 +99,9 @@ clean: clean_build clean_pyc ## Remove all build and python artifacts
 clean_pytest_cache:  ## Clear pytest cache
 	rm -rf .pytest_cache
 
+clean_ruff_cache:  ## Clear ruff cache
+	rm -rf .ruff_cache
+
 clean_tox_cache:  ## Clear tox cache
 	rm -rf .tox
 
@@ -106,7 +109,7 @@ clean_coverage:  ## Clear coverage cache
 	rm .coverage
 	rm -rf htmlcov
 
-clean_tests: clean_pytest_cache clean_tox_cache clean_coverage  ## Clear pytest, tox, and coverage caches
+clean_tests: clean_pytest_cache clean_ruff_cache clean_tox_cache clean_coverage  ## Clear pytest, ruff, tox, and coverage caches
 
 # -----------------------------------------------------------------------------
 # Deploy
@@ -121,17 +124,20 @@ release_test: dist ## Upload package to pypi test
 release: dist ## Package and upload a release
 	twine upload dist/*
 
+check: dist ## Twine check
+	twine check dist/*
+
 # -----------------------------------------------------------------------------
 # X Studios S3 PyPi
 # -----------------------------------------------------------------------------
 
 create_latest_copy:  dist
-	cp dist/*.whl dist/tableplus-latest-py2.py3-none-any.whl
+	cp dist/*.whl dist/tableplus_db_urls-latest-py3-none-any.whl
 
 push_to_s3: create_latest_copy  ## push distro to S3 bucket
 	aws s3 sync --profile=${aws_profile} --acl public-read ./dist/ s3://${s3_bucket}/ \
         --exclude "*" --include "*.whl"
-	echo "https://${s3_bucket}.s3.amazonaws.com/tableplus-latest-py2.py3-none-any.whl"
+	echo "https://${s3_bucket}.s3.amazonaws.com/tableplus_db_urls-latest-py3-none-any.whl"
 
 # -----------------------------------------------------------------------------
 # END - Generic commands
