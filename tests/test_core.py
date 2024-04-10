@@ -1,9 +1,13 @@
 import os
+import tempfile
+from argparse import Namespace
 
 import pytest
 from tableplus.core import build_db_url
+from tableplus.core import get_env
 from tableplus.core import get_local_db_conn_str
 from tableplus.core import get_prod_db_conn_str
+from tableplus.core import run
 
 # from tableplus.core import run
 
@@ -16,23 +20,47 @@ def _mock_env_vars():
     os.environ["POSTGRES_DB"] = "path"
 
 
+@pytest.fixture()
+def test_env():
+    temp = tempfile.NamedTemporaryFile(suffix=".env", delete=False)
+    temp.write(b"POSTGRES_USER=user\nPOSTGRES_PASSWORD=pass\nPOSTGRES_DB=db")
+    temp.close()
+    return temp
+
+
 def test_build_db_url():
-    url = build_db_url("user", "pass", "path")
-    assert url == "postgresql://user:pass@127.0.0.1:5432/path"
+    params = {"foo": "bar"}
+    url = build_db_url("user", "pass", "path", params=params)
+    assert url == "postgresql://user:pass@127.0.0.1:5432/path?foo=bar"
 
 
 def test_build_db_url_with_ssh():
-    url = build_db_url("user", "pass", "path", ssh_user="ssh_user", ssh_host="ssh_host")
-    assert url == "postgresql://ssh_user@ssh_host/user:pass@127.0.0.1:5432/path"
+    params = {"foo": "bar"}
+    url = build_db_url(
+        "user", "pass", "path", ssh_user="testuser", ssh_host="127.0.0.1", params=params
+    )
+
+    assert (
+        url == "postgresql://testuser@127.0.0.1/user:pass@127.0.0.1:5432/path?foo=bar"
+    )
 
 
 def test_get_local_db_conn_str():
-    conn_str = get_local_db_conn_str(".env")
+    env = get_env()
+    conn_str = get_local_db_conn_str(env)
     assert conn_str.startswith("postgresql://user:pass@127.0.0.1:5432/path")
 
 
 def test_get_prod_db_conn_str():
-    conn_str = get_prod_db_conn_str(".env", ssh_user="usta", ssh_host="159.203.98.10")
+    env = get_env()
+    conn_str = get_prod_db_conn_str(env, ssh_user="testuser", ssh_host="127.0.0.1")
     assert conn_str.startswith(
-        "postgresql+ssh://usta@159.203.98.10/user:pass@127.0.0.1:5432/path"
+        "postgresql+ssh://testuser@127.0.0.1/user:pass@127.0.0.1:5432/path"
     )
+
+
+def test_run(test_env, capsys):
+    args = Namespace(path=test_env.name, user="testuser", host="127.0.0.1")
+    run(args)
+    captured = capsys.readouterr()
+    assert isinstance(captured.out, str)

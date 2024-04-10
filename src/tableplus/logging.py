@@ -2,7 +2,7 @@ import logging
 import logging.handlers
 
 # Shut up these 3rd party packages
-shutup = ["urllib3"]
+shutup = ["urllib3", "environ"]
 for package in shutup:
     logging.getLogger(package).setLevel(logging.WARNING)
 

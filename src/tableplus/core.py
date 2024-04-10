@@ -3,10 +3,9 @@ from pathlib import Path
 from urllib.parse import quote
 from urllib.parse import urlencode
 
-# from urllib.parse import quote_plus
 import environ
 
-env = environ.Env()
+# from urllib.parse import quote_plus
 
 
 def build_db_url(  # noqa: PLR0913
@@ -31,10 +30,16 @@ def build_db_url(  # noqa: PLR0913
     )
 
 
-def get_local_db_conn_str(env_path: str) -> str:
-    """Get the local DB connection string."""
-    env.read_env(env_path)
+def get_env(env_path=None) -> environ.Env:
+    """Get the environment variables."""
+    env = environ.Env()
+    if env_path and Path(env_path).exists():
+        env.read_env(env_path)
+    return env
 
+
+def get_local_db_conn_str(env: environ.Env) -> str:
+    """Get the local DB connection string."""
     params = {
         "statusColor": "F8F8F8",
         "env": "local",
@@ -49,10 +54,8 @@ def get_local_db_conn_str(env_path: str) -> str:
     return build_db_url(db_user, db_pass, db_name, params=params)
 
 
-def get_prod_db_conn_str(env_path: str, ssh_user: str, ssh_host: str) -> str:
+def get_prod_db_conn_str(env: environ.Env, ssh_user: str, ssh_host: str) -> str:
     """Get the production DB connection string."""
-    env.read_env(env_path)
-
     params = {
         "statusColor": "FFD7D4",
         "env": "production",
@@ -80,14 +83,23 @@ def get_prod_db_conn_str(env_path: str, ssh_user: str, ssh_host: str) -> str:
     )
 
 
-def run(args: Namespace):
+def _output_db_urls(local_db_url: str, prod_db_url: str) -> None:
+    """Output the DB URLs."""
+    print("=> TablePlus: Right click > New > Connection from URL...")  # noqa: T201
+    print("LOCAL:", local_db_url)  # noqa: T201
+    print("PROD:", prod_db_url)  # noqa: T201
+
+
+def run(args: Namespace) -> None:
     """Main entry point for the CLI."""
     project_path = Path(args.path).expanduser()
     local_env_path = str(project_path / ".envs/.local/.postgres")
     prod_env_path = str(project_path / ".envs/.production/.postgres")
 
-    print("LOCAL DB CONN:", get_local_db_conn_str(local_env_path))  # noqa: T201
-    print(
-        "PROD DB CONN:",
-        get_prod_db_conn_str(prod_env_path, args.user, args.host),
-    )  # noqa: T201
+    local_env = get_env(local_env_path)
+    prod_env = get_env(prod_env_path)
+
+    local_db_url = get_local_db_conn_str(local_env)
+    prod_db_url = get_prod_db_conn_str(prod_env, args.user, args.host)
+
+    _output_db_urls(local_db_url, prod_db_url)
