@@ -1,5 +1,8 @@
 # TablePlus DB URLS
 
+![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen)
+<!-- ![Code Style](https://img.shields.io/badge/code_style-ruff-black) -->
+
 ## Overview
 Generate TablePlus DB URLs from CookieCutter Django to make setting up connections easier. Yea, I'm that lazy!
 
@@ -36,4 +39,4 @@ make open_coverage
 
 ## Issues
 
-If you experience any issues, please create an [issue](https://github.com/tsantor/tableplus-db-urls/issues) on Bitbucket.
+If you experience any issues, please create an [issue](https://github.com/tsantor/tableplus-db-urls/issues) on Github.

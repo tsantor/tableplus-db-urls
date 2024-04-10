@@ -116,7 +116,7 @@ clean_tests: clean_pytest_cache clean_ruff_cache clean_tox_cache clean_coverage 
 # -----------------------------------------------------------------------------
 
 dist: clean ## Builds source and wheel package
-	python3 -m build --wheel
+	python3 -m build
 
 release_test: dist ## Upload package to pypi test
 	twine upload dist/* -r pypitest
