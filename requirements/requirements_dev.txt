@@ -1,7 +1,7 @@
 twine==5.0.0
-wheel==0.42.0
-build==1.1.1
-pre-commit==3.6.2
+wheel==0.43.0
+build==1.2.1
+pre-commit==3.7.0
 
 # X Studios
-pip-freezer==0.3.5
+pip-freezer==0.3.6

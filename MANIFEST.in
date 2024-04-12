@@ -1,5 +1,6 @@
 include AUTHORS.md
 include HISTORY.md
+inlucde LICENSE
 include README.md
 
 # recursive-include requirements/ *.txt
