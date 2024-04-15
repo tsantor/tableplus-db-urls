@@ -5,8 +5,6 @@ import sys
 from . import __version__
 from .core import run as cli_run
 
-# from .logging import setup_logging
-
 logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
@@ -35,8 +33,6 @@ def run():
     """Run script."""
 
     args = get_parser()
-
-    # setup_logging(args.verbose)
 
     cli_run(args)
 
