@@ -1,7 +1,7 @@
 # Testing
 # ------------------------------------------------------------------------------
-pytest==8.1.1
-pytest-mock==3.14.0
+pytest==8.1.1  # https://github.com/pytest-dev/pytest
+pytest-mock==3.14.0  # https://github.com/pytest-dev/pytest-mock
 
 # Code quality
 # ------------------------------------------------------------------------------

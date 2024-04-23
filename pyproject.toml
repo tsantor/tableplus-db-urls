@@ -17,7 +17,8 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "python-environ",
+  "click",
+  "python-dotenv",
 ]
 
 dynamic = ["version", "readme"]
@@ -35,7 +36,7 @@ Issues = "https://github.com/tsantor/tableplus-db-urls/issues"
 Changelog = "https://github.com/tsantor/tableplus-db-urls/blob/master/HISTORY.md"
 
 [project.scripts]
-tableplus = "tableplus.cli:run"
+tableplus = "tableplus.cli:cli"
 
 [project.optional-dependencies]
 dev = []

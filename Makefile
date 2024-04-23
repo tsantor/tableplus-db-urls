@@ -34,11 +34,15 @@ s3_bucket=xstudios-pypi
 
 env:  ## Create virtual environment (uses `pyenv`)
 	pyenv virtualenv ${python_version} ${venv} && pyenv local ${venv}
+	python3 -m pip install -U pip
 
 env_remove:  ## Remove virtual environment
 	pyenv uninstall -f ${venv}
 
 env_from_scratch: env_remove env pip_install pip_install_editable  ## Create environment from scratch
+
+pyenv_rehash:	## Rehash pyenv
+	pyenv rehash
 
 # -----------------------------------------------------------------------------
 # Pip
@@ -49,7 +53,7 @@ pip_install:  ## Install requirements
 	@for file in $$(ls requirements/*.txt); do \
 			python3 -m pip install -r $$file; \
 	done
-	pre-commit install
+	# pre-commit install
 
 pip_install_editable:  ## Install in editable mode
 	python3 -m pip install -e .
@@ -60,9 +64,6 @@ pip_list:  ## Run pip list
 pip_freeze:  ## Run pipfreezer
 	pipfreezer
 
-pip_checker:  ## Run pipchecker
-	python3 manage.py pipchecker
-
 # -----------------------------------------------------------------------------
 # Testing
 # -----------------------------------------------------------------------------
@@ -72,6 +73,9 @@ pytest:  ## Run tests
 
 pytest_verbose:  ## Run tests in verbose mode
 	pytest -vvs
+
+pytest_node_ids:  ## show node ids
+	cat .pytest_cache/v/cache/nodeids
 
 coverage:  ## Run tests with coverage
 	coverage run -m pytest && coverage html
@@ -90,10 +94,10 @@ open_coverage:  ## Open coverage report
 # -----------------------------------------------------------------------------
 
 ruff_format: ## Run ruff format
-	ruff format src/tableplus
+	ruff format src/
 
 ruff_check: ## Run ruff check
-	ruff check src/tableplus
+	ruff check src/
 
 ruff_clean: ## Run ruff clean
 	ruff clean
@@ -138,7 +142,7 @@ tree:  ## Show directory tree
 # -----------------------------------------------------------------------------
 
 dist: clean  ## Builds source and wheel package
-	python3 -m build --wheel
+	python3 -m build
 
 release_test: dist  ## Upload package to pypi test
 	twine upload dist/* -r pypitest

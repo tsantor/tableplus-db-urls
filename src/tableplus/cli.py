@@ -1,45 +1,54 @@
-import argparse
 import logging
-import sys
+from pathlib import Path
 
-from . import __version__
-from .core import run as cli_run
+import click
+
+from .core import get_local_db_conn_str
+from .core import get_prod_db_conn_str
 
 logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
 
 
-def get_parser():
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Generate TablePlus DB URLs from CookieCutter Django to make setting up connections easier."
-    )
-    parser.add_argument("-p", "--path", required=True, help="Path to the project")
-    parser.add_argument("--ssh-user", required=True, help="SSH User")
-    parser.add_argument("--ssh-host", required=True, help="SSH Host")
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Verbose output",
-    )
-    parser.add_argument("--version", action="version", version=__version__)
-
-    return parser.parse_args()
+def silent_echo(*args, **kwargs):
+    pass
 
 
-def run():
-    """Run script."""
+@click.command()
+@click.option("-p", "--path", required=True, help="Path to the project")
+@click.option("--ssh-user", required=True, help="SSH User")
+@click.option("--ssh-host", required=True, help="SSH Host")
+@click.option("-v", "--verbose", is_flag=True, help="Verbose output")
+def generate(path, ssh_user, ssh_host, verbose) -> None:
+    """Main entry point for the CLI."""
 
-    args = get_parser()
+    if not verbose:
+        click.echo = silent_echo
 
-    cli_run(args)
+    project_path = Path(path).expanduser()
+    local_env_path = str(project_path / ".envs/.local/.postgres")
+    prod_env_path = str(project_path / ".envs/.production/.postgres")
 
-    sys.exit()
+    local_db_url = get_local_db_conn_str(local_env_path)
+    prod_db_url = get_prod_db_conn_str(prod_env_path, ssh_user, ssh_host)
+
+    click.secho("=> TablePlus: Right click > New > Connection from URL...", fg="green")
+    click.secho("\nLOCAL:", dim=True)
+    click.secho(f"{local_db_url}")
+    click.secho("\nPROD:", dim=True)
+    click.secho(f"{prod_db_url}")
 
 
-# -----------------------------------------------------------------------------
+# Set up your command-line interface grouping
+@click.group()
+@click.version_option(package_name="tableplus-db-urls", prog_name="tableplus-db-urls")
+def cli():
+    """Generate TablePlus DB URLs from CookieCutter Django to make setting
+    up connections easier."""
+
+
+cli.add_command(generate)
 
 if __name__ == "__main__":
-    run()
+    cli()

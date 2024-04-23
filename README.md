@@ -22,7 +22,7 @@ $ python3 -m pip install tableplus-db-urls
 
 ```bash
 # --path should be your django project root
-$ tableplus --path="." --ssh-user="user" --ssh-host="xxx.xxx.x.x"
+$ tableplus generate --path="." --ssh-user="user" --ssh-host="xxx.xxx.x.x"
 ```
 
 Then in TablePlus, on the main screen, right-click and choose `New` > `Connection from URL...` and use the URLs provided by the output.

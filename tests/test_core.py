@@ -1,22 +1,9 @@
-import os
 import tempfile
-from argparse import Namespace
 
 import pytest
 from tableplus.core import build_db_url
 from tableplus.core import get_local_db_conn_str
 from tableplus.core import get_prod_db_conn_str
-from tableplus.core import run
-
-# from tableplus.core import run
-
-
-@pytest.fixture(autouse=True)
-def _mock_env_vars():
-    # Set up mock environment variables
-    os.environ["POSTGRES_USER"] = "user"
-    os.environ["POSTGRES_PASSWORD"] = "pass"  # noqa: S105
-    os.environ["POSTGRES_DB"] = "path"
 
 
 @pytest.fixture()
@@ -57,10 +44,3 @@ def test_get_prod_db_conn_str(temp_env):
     assert conn_str.startswith(
         "postgresql+ssh://testuser@127.0.0.1/user:pass@127.0.0.1:5432/path"
     )
-
-
-def test_run(temp_env, capsys):
-    args = Namespace(path=temp_env.name, ssh_user="testuser", ssh_host="127.0.0.1")
-    run(args)
-    captured = capsys.readouterr()
-    assert isinstance(captured.out, str)
