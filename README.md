@@ -2,8 +2,6 @@
 
 ![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen)
 
-<!-- ![Code Style](https://img.shields.io/badge/code_style-ruff-black) -->
-
 ## Overview
 
 Generate TablePlus DB URLs from CookieCutter Django to make setting up connections easier. Yea, I'm that lazy!
@@ -25,6 +23,8 @@ $ python3 -m pip install tableplus-db-urls
 $ tableplus generate --path="." --ssh-user="user" --ssh-host="xxx.xxx.x.x"
 ```
 
+> **NOTE:** TablePlus DB URLs assumes you use an SSH Key to login and not password.
+
 Then in TablePlus, on the main screen, right-click and choose `New` > `Connection from URL...` and use the URLs provided by the output.
 
 ## Development
@@ -32,7 +32,7 @@ Then in TablePlus, on the main screen, right-click and choose `New` > `Connectio
 ```bash
 make env
 make pip_install
-python3 -m pip install -e .
+make pip_install_editable
 ```
 
 ## Testing
