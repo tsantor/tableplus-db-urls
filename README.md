@@ -20,7 +20,7 @@ $ python3 -m pip install tableplus-db-urls
 
 ```bash
 # --path should be your django project root
-$ tableplus generate --path="." --ssh-user="user" --ssh-host="xxx.xxx.x.x"
+$ tableplus generate --path="." --name="DB Name" --ssh-user="user" --ssh-host="xxx.xxx.x.x"
 ```
 
 > **NOTE:** TablePlus DB URLs assumes you use an SSH Key to login and not password.
@@ -45,4 +45,4 @@ make open_coverage
 
 ## Issues
 
-If you experience any issues, please create an [issue](https://github.com/tsantor/tableplus-db-urls/issues) on Github.
+If you experience any issues, please create an [issue](https://github.com/tsantor/tableplus-db-urls/issues) on GitHub.

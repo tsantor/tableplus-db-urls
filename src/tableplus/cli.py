@@ -32,7 +32,7 @@ def generate(path, name, ssh_user, ssh_host, verbose) -> None:
     prod_env_path = str(project_path / ".envs/.production/.postgres")
 
     local_db_url = get_local_db_conn_str(name, local_env_path)
-    prod_db_url = get_prod_db_conn_str(prod_env_path, name, ssh_user, ssh_host)
+    prod_db_url = get_prod_db_conn_str(name, prod_env_path, ssh_user, ssh_host)
 
     click.secho("=> TablePlus: Right click > New > Connection from URL...", fg="green")
     click.secho("\nLOCAL:", dim=True)
