@@ -34,12 +34,11 @@ s3_bucket=xstudios-pypi
 
 env:  ## Create virtual environment (uses `pyenv`)
 	pyenv virtualenv ${python_version} ${venv} && pyenv local ${venv}
-	python3 -m pip install -U pip
 
 env_remove:  ## Remove virtual environment
 	pyenv uninstall -f ${venv}
 
-env_from_scratch: env_remove env pip_install pip_install_editable  ## Create environment from scratch
+env_recreate: env_remove env pip_install pip_install_editable  ## Recreate environment from scratch
 
 pyenv_rehash:	## Rehash pyenv
 	pyenv rehash
@@ -53,7 +52,7 @@ pip_install:  ## Install requirements
 	@for file in $$(ls requirements/*.txt); do \
 			python3 -m pip install -r $$file; \
 	done
-	# pre-commit install
+	pre-commit install
 
 pip_install_editable:  ## Install in editable mode
 	python3 -m pip install -e .
@@ -61,8 +60,11 @@ pip_install_editable:  ## Install in editable mode
 pip_list:  ## Run pip list
 	python3 -m pip list
 
-pip_freeze:  ## Run pipfreezer
-	pipfreezer
+pip_freeze:  ## Run pipfreezer freeze
+	pipfreezer freeze  --verbose
+
+pip_upgrade:  ## Run pipfreezer upgrade
+	pipfreezer upgrade  --verbose
 
 # -----------------------------------------------------------------------------
 # Testing
@@ -73,9 +75,6 @@ pytest:  ## Run tests
 
 pytest_verbose:  ## Run tests in verbose mode
 	pytest -vvs
-
-pytest_node_ids:  ## show node ids
-	cat .pytest_cache/v/cache/nodeids
 
 coverage:  ## Run tests with coverage
 	coverage run -m pytest && coverage html
@@ -94,10 +93,10 @@ open_coverage:  ## Open coverage report
 # -----------------------------------------------------------------------------
 
 ruff_format: ## Run ruff format
-	ruff format src/
+	ruff format src/vimeo_utils
 
 ruff_check: ## Run ruff check
-	ruff check src/
+	ruff check src/vimeo_utils
 
 ruff_clean: ## Run ruff clean
 	ruff clean
@@ -135,22 +134,22 @@ clean_tests: clean_pytest_cache clean_ruff_cache clean_tox_cache clean_coverage 
 # -----------------------------------------------------------------------------
 
 tree:  ## Show directory tree
-	tree -I 'build|dist|htmlcov|node_modules|migrations|contrib|__pycache__|*.egg-info|staticfiles|media|django_project'
+	tree -I 'dist|htmlcov|node_modules|__pycache__|*.egg-info|mkdocs'
 
 # -----------------------------------------------------------------------------
 # Deploy
 # -----------------------------------------------------------------------------
 
-dist: clean  ## Builds source and wheel package
+dist: clean ## Builds source and wheel package
 	python3 -m build
 
-release_test: dist  ## Upload package to pypi test
+twine_upload_test: dist ## Upload package to pypi test
 	twine upload dist/* -r pypitest
 
-release: dist  ## Package and upload a release
+twine_upload: dist ## Package and upload a release
 	twine upload dist/*
 
-check: dist  ## Twine check
+twine_check: dist ## Twine check
 	twine check dist/*
 
 # -----------------------------------------------------------------------------
