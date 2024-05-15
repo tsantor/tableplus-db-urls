@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.4 (2024-05-15)
+
+- Too quick on the trigger! Bug fix with CLI implementation after `name` added.
+
 ## 0.1.3 (2024-05-15)
 
 - Bug fix with CLI implementation after `name` added.
