@@ -27,13 +27,13 @@ def build_db_url(  # noqa: PLR0913
     )
 
 
-def get_local_db_conn_str(env_path=None) -> str:
+def get_local_db_conn_str(env_path, name: str) -> str:
     """Get the local DB connection string."""
     env = dotenv_values(Path(env_path))
     params = {
-        "statusColor": "F8F8F8",
+        "statusColor": "DAEBC2",
         "env": "local",
-        "name": "USTA",
+        "name": name,
         "lazyload": "true",
     }
 
@@ -44,13 +44,13 @@ def get_local_db_conn_str(env_path=None) -> str:
     return build_db_url(db_user, db_pass, db_name, params=params)
 
 
-def get_prod_db_conn_str(env_path, ssh_user: str, ssh_host: str) -> str:
+def get_prod_db_conn_str(env_path, name: str, ssh_user: str, ssh_host: str) -> str:
     """Get the production DB connection string."""
     env = dotenv_values(Path(env_path))
     params = {
         "statusColor": "FFD7D4",
         "env": "production",
-        "name": "USTA [TEST]",
+        "name": name,
         "tLSMode": "0",
         "usePrivateKey": "true",
         # "safeModeLevel": "0",
@@ -58,7 +58,6 @@ def get_prod_db_conn_str(env_path, ssh_user: str, ssh_host: str) -> str:
         # "driverVersion": "0",
         "lazyload": "true",
     }
-
     db_user = env["POSTGRES_USER"]
     db_pass = env["POSTGRES_PASSWORD"]
     db_name = env["POSTGRES_DB"]

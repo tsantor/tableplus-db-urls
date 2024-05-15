@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.2 (2024-05-15)
+
+- Added `name` argument to name the connection.
+
 ## 0.1.1 (2024-04-23)
 
 - Moved from `argparse` to `click`

@@ -33,13 +33,13 @@ def test_build_db_url_with_ssh():
 
 
 def test_get_local_db_conn_str(temp_env):
-    conn_str = get_local_db_conn_str(temp_env.name)
+    conn_str = get_local_db_conn_str(temp_env.name, name="Test")
     assert conn_str.startswith("postgresql://user:pass@127.0.0.1:5432/path")
 
 
 def test_get_prod_db_conn_str(temp_env):
     conn_str = get_prod_db_conn_str(
-        temp_env.name, ssh_user="testuser", ssh_host="127.0.0.1"
+        temp_env.name, name="Test", ssh_user="testuser", ssh_host="127.0.0.1"
     )
     assert conn_str.startswith(
         "postgresql+ssh://testuser@127.0.0.1/user:pass@127.0.0.1:5432/path"

@@ -17,10 +17,11 @@ def silent_echo(*args, **kwargs):
 
 @click.command()
 @click.option("-p", "--path", required=True, help="Path to the project")
+@click.option("-n", "--name", required=True, help="TablePlus Connection Name")
 @click.option("--ssh-user", required=True, help="SSH User")
 @click.option("--ssh-host", required=True, help="SSH Host")
 @click.option("-v", "--verbose", is_flag=True, help="Verbose output")
-def generate(path, ssh_user, ssh_host, verbose) -> None:
+def generate(path, name, ssh_user, ssh_host, verbose) -> None:
     """Main entry point for the CLI."""
 
     if not verbose:
@@ -30,8 +31,8 @@ def generate(path, ssh_user, ssh_host, verbose) -> None:
     local_env_path = str(project_path / ".envs/.local/.postgres")
     prod_env_path = str(project_path / ".envs/.production/.postgres")
 
-    local_db_url = get_local_db_conn_str(local_env_path)
-    prod_db_url = get_prod_db_conn_str(prod_env_path, ssh_user, ssh_host)
+    local_db_url = get_local_db_conn_str(name, local_env_path)
+    prod_db_url = get_prod_db_conn_str(prod_env_path, name, ssh_user, ssh_host)
 
     click.secho("=> TablePlus: Right click > New > Connection from URL...", fg="green")
     click.secho("\nLOCAL:", dim=True)
