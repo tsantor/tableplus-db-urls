@@ -21,8 +21,7 @@ help:
 # Variables
 # -----------------------------------------------------------------------------
 
-python_version=3.9.11
-venv=tableplus_env
+python_version=3.13.2
 package_name=tableplus
 aws_profile=xstudios
 s3_bucket=xstudios-pypi
@@ -32,39 +31,57 @@ s3_bucket=xstudios-pypi
 # Environment
 # -----------------------------------------------------------------------------
 
-env:  ## Create virtual environment (uses `pyenv`)
-	pyenv virtualenv ${python_version} ${venv} && pyenv local ${venv}
+# -----------------------------------------------------------------------------
+# Environment
+# -----------------------------------------------------------------------------
+
+env:  ## Create virtual environment (uses `uv`)
+	uv venv --python ${python_version}
 
 env_remove:  ## Remove virtual environment
-	pyenv uninstall -f ${venv}
+	rm -rf .venv
 
-env_recreate: env_remove env pip_install pip_install_editable  ## Recreate environment from scratch
-
-pyenv_rehash:	## Rehash pyenv
-	pyenv rehash
+env_from_scratch: env_remove env pip_install  ## Create environment from scratch
 
 # -----------------------------------------------------------------------------
 # Pip
 # -----------------------------------------------------------------------------
 
 pip_install:  ## Install requirements
-	python3 -m pip install --upgrade pip
+	uv pip install --upgrade pip
 	@for file in $$(ls requirements/*.txt); do \
-			python3 -m pip install -r $$file; \
+			uv pip install -r $$file; \
 	done
 	pre-commit install
 
+pip_add_dependencies:  ## Add dependencies
+	uv add click python-dotenv
+
+pip_add_dev_dependencies:  ## Add dev dependencies
+	uv add twine wheel build ruff pipdeptree pre-commit --group dev
+
+pip_add_test_dependencies:  ## Add test dependencies
+	uv add pytest pytest-cov pytest-mock coverage --group test
+
 pip_install_editable:  ## Install in editable mode
-	python3 -m pip install -e .
+	uv pip install -e .
+	uv sync --all-groups
+	pre-commit install
 
 pip_list:  ## Run pip list
-	python3 -m pip list
+	uv pip list
 
-pip_freeze:  ## Run pipfreezer freeze
-	pipfreezer freeze  --verbose
+pip_tree: ## Run pip tree
+	uv pip tree
 
-pip_upgrade:  ## Run pipfreezer upgrade
-	pipfreezer upgrade  --verbose
+pipdeptree:  ## # Run pipdeptree
+	uv run pipdeptree
+
+uv_sync:  ## Sync dependencies [production, dev, test]
+	uv sync --all-groups
+
+uv_lock_check:	## Check if lock file is up to date
+	uv lock --check
 
 # -----------------------------------------------------------------------------
 # Testing
