@@ -6,7 +6,7 @@
 
 Generate TablePlus DB URLs from CookieCutter Django to make setting up connections easier.
 
-It assumes you are using [cookiecutter-django](https://github.com/cookiecutter/cookiecutter-django) with `use_docker=y` and connecting to Postgres over SSH in production.
+Plays nice with [cookiecutter-django](https://github.com/cookiecutter/cookiecutter-django).
 
 ## Installation
 
