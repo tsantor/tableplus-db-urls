@@ -4,6 +4,45 @@ from urllib.parse import urlencode
 
 from dotenv import dotenv_values
 
+REQUIRED_ENV_KEYS = ("POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB")
+
+
+class TableplusConfigError(ValueError):
+    """Raised when required TablePlus environment configuration is missing."""
+
+    @classmethod
+    def missing_env_file(cls, env_name: str, path: Path):
+        message = (
+            f"Missing {env_name} env file: {path}. "
+            "Expected file with POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB."
+        )
+        return cls(message)
+
+    @classmethod
+    def missing_env_vars(cls, env_name: str, path: Path, missing_keys: list[str]):
+        missing_keys_text = ", ".join(missing_keys)
+        message = (
+            f"Missing required {env_name} env vars in {path}: {missing_keys_text}."
+        )
+        return cls(message)
+
+
+def _load_db_credentials(env_path: str, env_name: str) -> tuple[str, str, str]:
+    path = Path(env_path)
+    if not path.is_file():
+        raise TableplusConfigError.missing_env_file(env_name, path)
+
+    env = dotenv_values(path)
+    missing_keys = [key for key in REQUIRED_ENV_KEYS if not env.get(key)]
+    if missing_keys:
+        raise TableplusConfigError.missing_env_vars(env_name, path, missing_keys)
+
+    return (
+        str(env["POSTGRES_USER"]),
+        str(env["POSTGRES_PASSWORD"]),
+        str(env["POSTGRES_DB"]),
+    )
+
 
 def build_db_url(  # noqa: PLR0913
     username: str,
@@ -29,7 +68,6 @@ def build_db_url(  # noqa: PLR0913
 
 def get_local_db_conn_str(env_path, name: str) -> str:
     """Get the local DB connection string."""
-    env = dotenv_values(Path(env_path))
     params = {
         "statusColor": "DAEBC2",
         "env": "local",
@@ -37,16 +75,13 @@ def get_local_db_conn_str(env_path, name: str) -> str:
         "lazyload": "true",
     }
 
-    db_user = env["POSTGRES_USER"]
-    db_pass = env["POSTGRES_PASSWORD"]
-    db_name = env["POSTGRES_DB"]
+    db_user, db_pass, db_name = _load_db_credentials(str(env_path), "local")
 
     return build_db_url(db_user, db_pass, db_name, params=params)
 
 
 def get_prod_db_conn_str(env_path, name: str, ssh_user: str, ssh_host: str) -> str:
     """Get the production DB connection string."""
-    env = dotenv_values(Path(env_path))
     params = {
         "statusColor": "FFD7D4",
         "env": "production",
@@ -58,9 +93,7 @@ def get_prod_db_conn_str(env_path, name: str, ssh_user: str, ssh_host: str) -> s
         # "driverVersion": "0",
         "lazyload": "true",
     }
-    db_user = env["POSTGRES_USER"]
-    db_pass = env["POSTGRES_PASSWORD"]
-    db_name = env["POSTGRES_DB"]
+    db_user, db_pass, db_name = _load_db_credentials(str(env_path), "production")
 
     return build_db_url(
         db_user,

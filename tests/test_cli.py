@@ -65,3 +65,54 @@ def test_generate_outputs_urls(runner, project_path: Path):
     assert "postgresql+ssh://testuser@127.0.0.1/user:pass@127.0.0.1:5432/path" in (
         result.output
     )
+
+
+def test_generate_friendly_error_for_missing_env_file(runner, tmp_path: Path):
+    result = runner.invoke(
+        cli,
+        [
+            "generate",
+            "--path",
+            str(tmp_path),
+            "--name",
+            "DB Name",
+            "--ssh-user",
+            "testuser",
+            "--ssh-host",
+            "127.0.0.1",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "Error: Missing local env file:" in result.output
+    assert "Traceback" not in result.output
+
+
+def test_generate_friendly_error_for_missing_required_env_vars(runner, tmp_path: Path):
+    local_env = tmp_path / ".envs" / ".local" / ".postgres"
+    prod_env = tmp_path / ".envs" / ".production" / ".postgres"
+    local_env.parent.mkdir(parents=True, exist_ok=True)
+    prod_env.parent.mkdir(parents=True, exist_ok=True)
+    local_env.write_text("POSTGRES_USER=user\n", encoding="utf-8")
+    prod_env.write_text("POSTGRES_USER=user\n", encoding="utf-8")
+
+    result = runner.invoke(
+        cli,
+        [
+            "generate",
+            "--path",
+            str(tmp_path),
+            "--name",
+            "DB Name",
+            "--ssh-user",
+            "testuser",
+            "--ssh-host",
+            "127.0.0.1",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "Error: Missing required local env vars" in result.output
+    assert "POSTGRES_PASSWORD" in result.output
+    assert "POSTGRES_DB" in result.output
+    assert "Traceback" not in result.output

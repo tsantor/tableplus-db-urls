@@ -3,6 +3,7 @@ from pathlib import Path
 
 import click
 
+from .core import TableplusConfigError
 from .core import get_local_db_conn_str
 from .core import get_prod_db_conn_str
 
@@ -21,10 +22,13 @@ def generate(path, name, ssh_user, ssh_host) -> None:
     local_env_path = str(project_path / ".envs/.local/.postgres")
     prod_env_path = str(project_path / ".envs/.production/.postgres")
 
-    local_db_url = get_local_db_conn_str(env_path=local_env_path, name=name)
-    prod_db_url = get_prod_db_conn_str(
-        env_path=prod_env_path, name=name, ssh_user=ssh_user, ssh_host=ssh_host
-    )
+    try:
+        local_db_url = get_local_db_conn_str(env_path=local_env_path, name=name)
+        prod_db_url = get_prod_db_conn_str(
+            env_path=prod_env_path, name=name, ssh_user=ssh_user, ssh_host=ssh_host
+        )
+    except TableplusConfigError as exc:
+        raise click.ClickException(str(exc)) from exc
 
     click.secho("=> TablePlus: Right click > New > Connection from URL...", fg="green")
     click.secho("\nLOCAL:", dim=True)
