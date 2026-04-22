@@ -1,6 +1,6 @@
 # TablePlus DB URLs
 
-![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-98.96%25-brightgreen)
 
 ## Overview
 
