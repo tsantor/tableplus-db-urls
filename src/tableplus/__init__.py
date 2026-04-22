@@ -1,7 +1,7 @@
-from .core import TableplusConfigError
-from .core import build_db_url
-from .core import get_local_db_conn_str
-from .core import get_prod_db_conn_str
+from tableplus.application.connection_strings import get_local_db_conn_str
+from tableplus.application.connection_strings import get_prod_db_conn_str
+from tableplus.domain.errors import TableplusConfigError
+from tableplus.domain.urls import build_db_url
 
 __all__ = [
     "TableplusConfigError",

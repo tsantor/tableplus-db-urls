@@ -1,7 +1,7 @@
 [project]
 name = "tableplus-db-urls"
 description = "Generate TablePlus DB URLs from CookieCutter Django to make setting up connections easier."
-version = "0.1.4"
+version = "0.2.0"
 dynamic = ["readme"]
 requires-python = ">=3.11"
 authors = [

@@ -1,14 +1,16 @@
 {
   "modules": {
     "tableplus": [
+      "TableplusConfigError",
       "build_db_url",
       "get_local_db_conn_str",
       "get_prod_db_conn_str"
     ],
-    "tableplus.core": [
-      "build_db_url",
+    "tableplus.application.connection_strings": [
       "get_local_db_conn_str",
       "get_prod_db_conn_str"
-    ]
+    ],
+    "tableplus.domain.errors": ["TableplusConfigError"],
+    "tableplus.domain.urls": ["build_db_url"]
   }
 }

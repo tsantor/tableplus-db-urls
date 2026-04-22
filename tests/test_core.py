@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from tableplus.core import TableplusConfigError
-from tableplus.core import build_db_url
-from tableplus.core import get_local_db_conn_str
-from tableplus.core import get_prod_db_conn_str
+from tableplus import TableplusConfigError
+from tableplus import build_db_url
+from tableplus import get_local_db_conn_str
+from tableplus import get_prod_db_conn_str
 
 
 @pytest.fixture
