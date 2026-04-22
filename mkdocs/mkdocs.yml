@@ -79,7 +79,7 @@ plugins:
       enabled_if_env: ENABLE_PDF_EXPORT
       # author: X Studios Team
       output_path: tableplus-db-urls-documentation.pdf
-      cover_title: Tableplus DB URLs Documentation
+      cover_title: Tableplus DB URLs
       cover_subtitle: Technical Documentation
       cover_logo: img/xstudios-logo-black.svg
       back_cover: true
