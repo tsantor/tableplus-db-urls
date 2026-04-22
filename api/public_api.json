@@ -1,0 +1,14 @@
+{
+  "modules": {
+    "tableplus": [
+      "build_db_url",
+      "get_local_db_conn_str",
+      "get_prod_db_conn_str"
+    ],
+    "tableplus.core": [
+      "build_db_url",
+      "get_local_db_conn_str",
+      "get_prod_db_conn_str"
+    ]
+  }
+}

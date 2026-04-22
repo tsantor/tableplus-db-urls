@@ -8,24 +8,14 @@ from .core import get_prod_db_conn_str
 
 logger = logging.getLogger(__name__)
 
-# -----------------------------------------------------------------------------
-
-
-def silent_echo(*args, **kwargs):
-    pass
-
 
 @click.command()
 @click.option("-p", "--path", required=True, help="Path to the project")
 @click.option("-n", "--name", required=True, help="TablePlus Connection Name")
 @click.option("--ssh-user", required=True, help="SSH User")
 @click.option("--ssh-host", required=True, help="SSH Host")
-@click.option("-v", "--verbose", is_flag=True, help="Verbose output")
-def generate(path, name, ssh_user, ssh_host, verbose) -> None:
+def generate(path, name, ssh_user, ssh_host) -> None:
     """Main entry point for the CLI."""
-
-    if not verbose:
-        click.echo = silent_echo
 
     project_path = Path(path).expanduser()
     local_env_path = str(project_path / ".envs/.local/.postgres")
@@ -47,8 +37,7 @@ def generate(path, name, ssh_user, ssh_host, verbose) -> None:
 @click.group()
 @click.version_option(package_name="tableplus-db-urls", prog_name="tableplus-db-urls")
 def cli():
-    """Generate TablePlus DB URLs from CookieCutter Django to make setting
-    up connections easier."""
+    """Generate TablePlus DB URLs from .env files for local and production environments."""
 
 
 cli.add_command(generate)
